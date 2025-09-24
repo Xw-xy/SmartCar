@@ -22,6 +22,8 @@
 #include "stm32g4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "FreeRTOS.h"
+#include "Task.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -138,18 +140,7 @@ void UsageFault_Handler(void)
   }
 }
 
-/**
-  * @brief This function handles System service call via SWI instruction.
-  */
-void SVC_Handler(void)
-{
-  /* USER CODE BEGIN SVCall_IRQn 0 */
 
-  /* USER CODE END SVCall_IRQn 0 */
-  /* USER CODE BEGIN SVCall_IRQn 1 */
-
-  /* USER CODE END SVCall_IRQn 1 */
-}
 
 /**
   * @brief This function handles Debug monitor.
@@ -164,32 +155,9 @@ void DebugMon_Handler(void)
   /* USER CODE END DebugMonitor_IRQn 1 */
 }
 
-/**
-  * @brief This function handles Pendable request for system service.
-  */
-void PendSV_Handler(void)
-{
-  /* USER CODE BEGIN PendSV_IRQn 0 */
 
-  /* USER CODE END PendSV_IRQn 0 */
-  /* USER CODE BEGIN PendSV_IRQn 1 */
 
-  /* USER CODE END PendSV_IRQn 1 */
-}
 
-/**
-  * @brief This function handles System tick timer.
-  */
-void SysTick_Handler(void)
-{
-  /* USER CODE BEGIN SysTick_IRQn 0 */
-
-  /* USER CODE END SysTick_IRQn 0 */
-  HAL_IncTick();
-  /* USER CODE BEGIN SysTick_IRQn 1 */
-
-  /* USER CODE END SysTick_IRQn 1 */
-}
 
 /******************************************************************************/
 /* STM32G4xx Peripheral Interrupt Handlers                                    */
@@ -199,5 +167,24 @@ void SysTick_Handler(void)
 /******************************************************************************/
 
 /* USER CODE BEGIN 1 */
+// 栈溢出钩子函数
+void vApplicationStackOverflowHook( TaskHandle_t xTask, char *pcTaskName )
+{
+    // 可以在这里添加栈溢出的处理逻辑，如记录日志、触发调试等
+    ( void ) xTask;
+    ( void ) pcTaskName;
+    
+    // 通常在发生栈溢出时，系统可能处于不稳定状态，这里可以选择重启
+    for( ;; );
+}
+
+// 内存分配失败钩子函数
+void vApplicationMallocFailedHook( void )
+{
+    // 可以在这里添加内存分配失败的处理逻辑
+    // 内存分配失败通常是严重错误，可能需要重启系统
+    for( ;; );
+}
+
 
 /* USER CODE END 1 */
